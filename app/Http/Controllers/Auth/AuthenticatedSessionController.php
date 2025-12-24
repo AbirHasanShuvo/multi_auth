@@ -14,21 +14,32 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create()
     {
+        // if (Auth::check()) {
+        //     return Auth::user()->usertype === 'admin'
+        //         ? redirect()->route('admin.dashboard')
+        //         : redirect()->route('user.dashboard');
+        // }
+
         return view('auth.login');
     }
 
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
         $request->authenticate();
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        //if usertype admin then rediredct admin dashbaord else user dashbord
+        //dd(Auth::check(), Auth::user());
+
+        return Auth::user()->usertype === 'admin'
+            ? redirect()->route('admin.dashboard')
+            : redirect()->route('user.dashboard');
     }
 
     /**
